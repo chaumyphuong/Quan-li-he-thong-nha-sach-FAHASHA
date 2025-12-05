@@ -34,16 +34,12 @@ The primary goal of this project is to design and implement a modern, centralize
 By achieving these objectives, FAHASA aims to improve operational efficiency, enhance customer satisfaction, increase online and in-store sales, and strengthen its position as Vietnam’s leading modern bookstore chain in the digital era.
 This database system will serve as the backbone for both physical store operations and the future FAHASA online shopping platform.
 
-### Entity-Relationship Diagram (ERD)
-![FAHASA ERD](images/ERD_FAHASHA.png)
-
----
-
-### Database Structure (9 Tables)
+# Database design
+## List of table
+**Database Structure (8 Tables)**
 | Table            | Purpose                              | Key Fields                              |
 |------------------|--------------------------------------|-----------------------------------------|
 | Books            | All book details                     | BookID (PK), Title, Price, Stock        |
-| Genres           | Book categories                      | GenreID (PK), GenreName                 |
 | Publishers       | Publishing houses                    | PublisherID (PK), Name, Year            |
 | Authors          | Book authors                         | AuthorID (PK), AuthorName               |
 | Book_Author      | Many-to-many link                    | AuthorID + BookID (composite PK)        |
@@ -52,432 +48,85 @@ This database system will serve as the backbone for both physical store operatio
 | Invoices         | Sales transactions                   | InvoiceID (PK), Date, CustomerID, EmployeeID |
 | InvoiceDetails   | Items in each invoice                | InvoiceID + BookID (PK), Qty, LineTotal |
 
+## Table design
+**1. Book table**
+| Field Name       | Data Type      | Width/Precision | Description                  | Notes & Constraints                                      |
+|------------------|----------------|-----------------|------------------------------|----------------------------------------------------------|
+| BookID           | CHAR(6)        | 6               | Book ID         | `PRIMARY KEY`                                           |
+| Title            | NVARCHAR(100)  | 100             | Book title                   | NOT NULL                                              |
+| GenreID          | CHAR(6)        | 6               | Genre/Category ID            | NOT NULL, <br>`FOREIGN KEY → Genres(GenreID)`          |
+| PublisherID      | CHAR(6)        | 6               | Publisher ID                 | NOT NULL, <br>`FOREIGN KEY → Publishers(PublisherID)`  |
+| Price            | DECIMAL(12,0)  | –               | Price (VND)                  | NOT NULL,                         |
+| QuantityInStock  | INT            | –               | Stock quantity               | NOT NULL,  |
+| CoverType        | NVARCHAR(30)   | 30              | Cover type                   | NOT NUL |
 
-III.	LƯỢC ĐỒ ERD
-1.	Lược đồ ERD
- 
-Hình 1: Lược đồ ERD (chưa mở rộng)
+**2. Genres table**
+| Field Name   | Data Type     | Width | Description            | Constraints                  |
+|--------------|---------------|-------|------------------------|------------------------------|
+| GenreID      | CHAR(6)       | 6     | Genre ID (PK)          | `PRIMARY KEY`             |
+| GenreName    | NVARCHAR(50)  | 50    | Genre name             | NOT NULL                   |
 
+**3. Authors table** 
 
+| Field Name | Data Type | Width | Description        | Constraints   |
+|------------|-----------|--------|--------------------|---------------|
+| AuthorID   | CHAR      | 6      | Author ID (PK)     | `PRIMARY KEY`   |
+| AuthorName | NVARCHAR  | 100    | Full name of author| NOT NULL      |
 
+**4. Publishers table** 
 
+| Field Name      | Data Type | Width | Description          | Constraints   |
+|------------------|-----------|--------|----------------------|---------------|
+| PublisherID      | CHAR      | 6      | Publisher ID (PK)    | `PRIMARY KEY`   |
+| PublisherName    | NVARCHAR  | 100    | Publisher name       | NOT NULL      |
+| EstablishedYear  | YEAR      | –      | Year established     |               |
 
+**5. Employees table** 
 
+| Field Name   | Data Type | Width | Description     | Constraints |
+|--------------|-----------|--------|-----------------|-------------|
+| EmployeeID   | CHAR      | 6      | Employee ID (PK)| `PRIMARY KEY` |
+| FirstName    | NVARCHAR  | 10     | First name      | NOT NULL    |
+| LastName     | NVARCHAR  | 50     | Last name       | NOT NULL    |
+| Phone        | CHAR      | 10     | Phone number    |             |
+| DateOfBirth  | DATE      | –      | Date of birth   |             |
+| Gender       | NVARCHAR  | 10     | Gender          |             |
 
+**6. Customers table**
 
+| Field Name | Data Type | Width | Description      | Constraints |
+|------------|-----------|--------|------------------|-------------|
+| CustomerID | CHAR      | 6      | Customer ID (PK) | `PRIMARY KEY` |
+| FirstName  | NVARCHAR  | 10     | First name       | NOT NULL    |
+| LastName   | NVARCHAR  | 30     | Last name        | NOT NULL    |
+| Gender     | NVARCHAR  | 5      | Gender           |             |
+| Phone      | CHAR      | 10     | Phone number     |             |
+| Address    | NVARCHAR  | 100    | Home address     |             |
 
+**7. Invoices table**
 
+| Field Name  | Data Type | Width | Description        | Constraints |
+|-------------|-----------|--------|--------------------|-------------|
+| InvoiceID   | CHAR      | 8      | Invoice ID (PK)    | `PRIMARY KEY` |
+| CustomerID  | CHAR      | 6      | Customer ID        | FK → Customers |
+| EmployeeID  | CHAR      | 6      | Employee ID        | FK → Employees |
+| InvoiceDate | DATE      | –      | Purchase date      |  |
+| TotalAmount | DECIMAL   | 15,0   | Total amount (VND) | NOT NULL    |
 
-2.	Ánh xạ 
- 
-Hình 2: Ánh xạ lược đồ (đã mở rộng)
- 
-Hình 3: Ánh xạ lược đồ (đã mở rộng)
-3.	Lược đồ cơ sở dữ liệu
- 
-Hình 4: Lược đồ cơ sở dữ liệu
+**8. InvoiceDetails table**
 
-IV.	THIẾT KẾ BẢNG
-Database name: Sach
-Field name	Data type	Width	Description
-Masach	Char	6	Mã sách
-Tensach	Nvarchar	100	Tên sách
-Maloaisach	Char	6	Mã loại sách
-Manxb	Char	6	Mã nhà xuất bản
-Giaca	Money		Giá cả
-Soluong	Char	10	Số lượng
-Hinhthucbia	Nvarchar	30	Hình thức bìa
+| Field Name | Data Type | Width | Description        | Constraints                                 |
+|------------|-----------|--------|--------------------|---------------------------------------------|
+| InvoiceID  | CHAR      | 8      | Invoice ID         | `PK`, `FK → Invoices`                 |
+| BookID     | CHAR      | 6      | Book ID            | `PK`, `FK → Books`                    |
+| Quantity   | INT       | –      | Quantity sold      | NOT NULL           |
+| LineTotal  | DECIMAL   | 15,0   | Line total (VND)   | NOT NULL                                    |
 
-Database name: Loaisach
-Field name	Data type	Width	Description
-Maloaisach	Char	6	Mã loại sách
-Tenloaisach	Nvarchar	50	Tên loại sách
-
-Database name: Tacgia
-Field name	Data type	Width	Description
-Matacgia	Char	6	Mã tác giả
-Tentacgia	Nvarchar	100	Tên tác giả
-
-Database name: NXB
-Field name	Data type	Width	Description
-Manxb	Char	6	Mã nhà xuất bản
-Tennxb	Nvarchar	100	Tên nhà xuất bản
-Namnxb	Date		Năm xuất bản
-
-Database name: Nhanvien
-Field name	Data type	Width	Description
-Manv	Char	6	Mã nhân viên
-Ho	Nvarchar	10	Họ
-Ten	Nvarchar	50	Tên
-Sdt	Char	10	Số điện thoại
-Ngaysinh	Datetime		Ngày sinh
-Gioitinh	Nvarchar	10	Giới tính
-
-
-Database name: Khachhang
-Field name	Data type	Width	Description
-Makh	Char	4	Mã khách hang
-Ho	Nvarchar	10	Họ
-Ten	Nvarchar	30	Tên
-Gioitinh	Nvarchar	5	Giới tính
-Sdt	Char	10	Số điện thoại
-Diachi	Nvarchar	100	Địa chỉ
-
-Database name: Hoadon
-Field name	Data type	Width	Description
-Mahd	Char	8	Mã hóa đơn
-Makh 	Char	4	Mã khách hang
-Manv	Char	10	Mã nhân viên
-Ngaymua	Date		Ngày mua hang
-Tongcong	Money		Tổng tiền
-
-Database name: sach_tacgia
-Field name	Data type	Width	Description
-Masach	Char	6	Mã sách
-Matacgia	Char	6	Mã tác giả
-
-Database name: chitiethoadon
-Field name	Data type	Width	Description
-Masach	Char	6	Mã sách
-Mahd	Char	8	Mã hóa đơn
-Soluong	Int		Số lượng
-Thanhtien	Money		Thành tiền
-
-
-
-
-
-
-
-
-
-
-
-
-V.	HIỆN THỰC CƠ SỞ DỮ LIỆU TRÊN SQL SERVER
-Phần 1: Tạo cơ sở dữ liệu và bảng
-CREATE DATABASE NHA_SACH_FAHASA
-GO
-USE NHA_SACH_FAHASA
-GO
-CREATE TABLE LOAISACH
-(
-	MALOAISACH char(6) NOT NULL primary key,
-	TENLOAISACH NVARCHAR (50)
-)
-GO
-CREATE TABLE TACGIA
-(
-	MATACGIA char(6) NOT NULL primary key,
-	TENTACGIA NVARCHAR (100)
-)
-GO
-CREATE TABLE NXB
-(
-	MA_NXB char(6) NOT NULL primary key,
-	TEN_NXB NVARCHAR(100),
-	NAM_NXB DATE
-)
-GO
-CREATE TABLE SACH
-(
-	MASACH char(6) NOT NULL primary key,
-	TENSACH nvarchar(100),
-	MALOAISACH char(6) ,
-	MA_NXB CHAR(6),
-	GIACA MONEY,
-	SOLUONG char(10),
-	HINHTHUCBIA NVARCHAR(30)
-)
-GO
-ALTER TABLE SACH
-ADD CONSTRAINT FK_MALOAISACH FOREIGN KEY (MALOAISACH) REFERENCES LOAISACH(MALOAISACH)
-ALTER TABLE SACH
-ADD CONSTRAINT FK_MANXB FOREIGN KEY (MA_NXB) REFERENCES NXB(MA_NXB)
-GO
-CREATE TABLE NHANVIEN
-(
-	MANV char(10) NOT NULL primary key,
-	HO NVARCHAR(10),
-	TEN NVARCHAR(50),
-	SDT char(10),
-	NGAYSINH DATETIME,
-	GIOITINH nvarchar(10)
-)
-CREATE TABLE KHACHHANG
-(
-	MAKH char(4) NOT NULL primary key,
-	Ho nvarchar(10),
-	TEN NVARCHAR(30),
-	GIOITINH NVARCHAR(5),
-	Sdt char(10),
-	Diachi nvarchar(100)
-)
-GO
-
-CREATE TABLE HOADON
-(
-	MAHD char(8) NOT NULL primary key ,
-	MAKH CHAR(4),
-	MANV CHAR(10),
-	NGAYMUA DATE,
-	TONGCONG MONEY
-)
-GO
-ALTER TABLE HOADON
-ADD CONSTRAINT FK_MAKH FOREIGN KEY (MAKH) REFERENCES KHACHHANG(MAKH)
-ALTER TABLE HOADON
-ADD CONSTRAINT FK_MANV FOREIGN KEY (MANV) REFERENCES NHANVIEN(MANV)
-GO
-CREATE TABLE SACH_TACGIA
-(
-	MASACH char(6) NOT NULL,
-	MATACGIA char(6) NOT NULL,
-	CONSTRAINT PK_MASACH_MATACGIA PRIMARY KEY (MASACH,MATACGIA),
-)
-GO
-ALTER TABLE SACH_TACGIA
-ADD	CONSTRAINT FK_MASACH1 FOREIGN KEY (MASACH) REFERENCES SACH(MASACH)
-ALTER TABLE SACH_TACGIA
-ADD CONSTRAINT FK_MATACGIA FOREIGN KEY (MATACGIA) REFERENCES TACGIA(MATACGIA)
-GO
-
-CREATE TABLE CHITIETHOADON
-(
-	MASACH CHAR(6) NOT NULL,
-	MAHD CHAR(8) NOT NULL,
-	SOLUONG INT,
-	THANHTIEN MONEY,
-	CONSTRAINT PK_MASACH_MAHD PRIMARY KEY (MASACH,MAHD),
-)
-GO
-ALTER TABLE CHITIETHOADON
-ADD	CONSTRAINT FK_MASACH FOREIGN KEY (MASACH) REFERENCES SACH(MASACH)
-ALTER TABLE CHITIETHOADON
-ADD	CONSTRAINT FK_MAHD FOREIGN KEY (MAHD) REFERENCES HOADON(MAHD)
-GO
-Phần 2: Chèn dữ liệu và bảng
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG001 ', N'Vãn Tình')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG002 ', N'Lê Hoàng Ngọc Diễm')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG003 ', N'Lê Chu Cầu')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG004 ', N'Nhóm Hà Nội Tri Thức')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG005 ', N'Tây Mông')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG006 ', N'Vũ Điền')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG007 ', N'Dương Thị Hoa')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG008 ', N'Tân Di Ổ')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG009 ', N'Dưa Hấu Hạt Tím')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG010 ', N'Nguyễn Ngoan')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG011 ', N'Fujuko F. Fujio')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG012 ', N'Huy Cận')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG013 ', N'Uông Triều')
-INSERT [dbo].[TACGIA] ([MATACGIA], [TENTACGIA]) VALUES (N'TG014 ', N'Nguyễn Trương Quý')
-GO
-INSERT [dbo].[LOAISACH] ([MALOAISACH], [TENLOAISACH]) VALUES (N'LS1   ', N'Tâm Lí')
-INSERT [dbo].[LOAISACH] ([MALOAISACH], [TENLOAISACH]) VALUES (N'LS2   ', N'Tình cảm')
-INSERT [dbo].[LOAISACH] ([MALOAISACH], [TENLOAISACH]) VALUES (N'LS3   ', N'Truyện Tranh')
-INSERT [dbo].[LOAISACH] ([MALOAISACH], [TENLOAISACH]) VALUES (N'LS4   ', N'Văn học')
-INSERT [dbo].[LOAISACH] ([MALOAISACH], [TENLOAISACH]) VALUES (N'LS5   ', N'Kinh tế')
-INSERT [dbo].[LOAISACH] ([MALOAISACH], [TENLOAISACH]) VALUES (N'LS6   ', N'Viễn tưởng')
-GO
-INSERT [dbo].[NXB] ([MA_NXB], [TEN_NXB], [NAM_NXB]) VALUES (N'XB001 ', N'Dân Trí', CAST(N'2020-07-16' AS Date))
-INSERT [dbo].[NXB] ([MA_NXB], [TEN_NXB], [NAM_NXB]) VALUES (N'XB002 ', N'Thanh Niên', CAST(N'2021-08-23' AS Date))
-INSERT [dbo].[NXB] ([MA_NXB], [TEN_NXB], [NAM_NXB]) VALUES (N'XB003 ', N'Thế Giới', CAST(N'2021-09-08' AS Date))
-INSERT [dbo].[NXB] ([MA_NXB], [TEN_NXB], [NAM_NXB]) VALUES (N'XB004 ', N'Lao Động', CAST(N'2019-06-05' AS Date))
-INSERT [dbo].[NXB] ([MA_NXB], [TEN_NXB], [NAM_NXB]) VALUES (N'XB005 ', N'Kim Đồng', CAST(N'2022-08-06' AS Date))
-INSERT [dbo].[NXB] ([MA_NXB], [TEN_NXB], [NAM_NXB]) VALUES (N'XB006 ', N'Hà Nội', CAST(N'2019-03-03' AS Date))
-INSERT [dbo].[NXB] ([MA_NXB], [TEN_NXB], [NAM_NXB]) VALUES (N'XB007 ', N'Hội Nhà Văn', CAST(N'2020-02-02' AS Date))
-GO
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A001  ', N'Tâm lí học về tiền', N'LS1   ', N'XB001 ', 113000.0000, N'11        ', N'bìa mềm')
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A002  ', N'Trí tuệ làm giàu của người Do Thái', N'LS1   ', N'XB001 ', 88000.0000, N'22        ', N'bìa mềm')
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A003  ', N'Thanh xuân nổ lực để vươn xa ', N'LS3   ', N'XB002 ', 79000.0000, N'33        ', N'Bìa mềm')
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A004  ', N'Đô-rê-mon', N'LS3   ', N'XB005 ', 27500.0000, N'30        ', N'bìa cứng')
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A005  ', N'Chuyện người hà nội', N'LS4   ', N'XB006 ', 173000.0000, N'49        ', N'bìa cứng')
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A006  ', N'Hai bàn tay em', N'LS3   ', N'XB005 ', 61750.0000, N'60        ', N'bìa mềm')
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A007  ', N'Cuộc sống bí mật của nhà văn', N'LS2   ', N'XB007 ', 102000.0000, N'10        ', N'bìa mềm')
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A008  ', N'Thế giới rộng lớn lòng ngườ chật hẹp', N'LS2   ', N'XB003 ', 73000.0000, N'8         ', N'bìa mềm')
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A009  ', N'Thế giới mạng lưới', N'LS5   ', N'XB001 ', 80000.0000, N'7         ', N'bìa cứng')
-INSERT [dbo].[SACH] ([MASACH], [TENSACH], [MALOAISACH], [MA_NXB], [GIACA], [SOLUONG], [HINHTHUCBIA]) VALUES (N'A010  ', N'Niềm vui của việc ngừng lao động', N'LS6   ', N'XB004 ', 151000.0000, N'10        ', N'Bìa mềm')
-GO
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A001  ', N'TG001 ')
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A002  ', N'TG005 ')
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A003  ', N'TG002 ')
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A004  ', N'TG011 ')
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A005  ', N'TG004 ')
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A006  ', N'TG007 ')
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A007  ', N'TG003 ')
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A008  ', N'TG006 ')
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A009  ', N'TG008 ')
-INSERT [dbo].[SACH_TACGIA] ([MASACH], [MATACGIA]) VALUES (N'A010  ', N'TG009 ')
-GO
-INSERT [dbo].[KHACHHANG] ([MAKH], [Ho], [TEN], [GIOITINH], [Sdt], [Diachi]) VALUES (N'KH01', N'Nguyễn Kim', N'Anh', N'nữ', N'0903041456', N'8 Nguyễn Văn Tráng Quận 1')
-INSERT [dbo].[KHACHHANG] ([MAKH], [Ho], [TEN], [GIOITINH], [Sdt], [Diachi]) VALUES (N'KH02', N'Ngô Thị', N'Linh', N'nữ', N'0901151324', N'10 Nguyễn Trãi Quận 5')
-INSERT [dbo].[KHACHHANG] ([MAKH], [Ho], [TEN], [GIOITINH], [Sdt], [Diachi]) VALUES (N'KH03', N'Nguyễn Kim', N'Liên', N'nữ', N'0907892345', N'34 Ngô Quyền Quận 5')
-INSERT [dbo].[KHACHHANG] ([MAKH], [Ho], [TEN], [GIOITINH], [Sdt], [Diachi]) VALUES (N'KH04', N'Trần Mai', N'Anh', N'nữ', N'0904567891', N'23 Đồng Khởi Quận 1')
-INSERT [dbo].[KHACHHANG] ([MAKH], [Ho], [TEN], [GIOITINH], [Sdt], [Diachi]) VALUES (N'KH05', N'Trần Anh', N'Huy', N'nam', N'0908671234', N'76 Lê Lai Quận 1')
-INSERT [dbo].[KHACHHANG] ([MAKH], [Ho], [TEN], [GIOITINH], [Sdt], [Diachi]) VALUES (N'KH06', N'Nguyễn ', N'Quang', N'nam', N'0905678234', N'56 Võ Văn Tần Quận 3')
-INSERT [dbo].[KHACHHANG] ([MAKH], [Ho], [TEN], [GIOITINH], [Sdt], [Diachi]) VALUES (N'KH07', N'Lê ', N'Hương', N'nữ', N'0908567234', N'76 Xô Viết Nghệ Tĩnh Quận Bình Thạnh')
-GO
-INSERT [dbo].[NHANVIEN] ([MANV], [HO], [TEN], [SDT], [NGAYSINH], [GIOITINH]) VALUES (N'NV01      ', N'Bùi Thị', N'An', N'0988987632', CAST(N'1998-07-15T00:00:00.000' AS DateTime), N'nữ')
-INSERT [dbo].[NHANVIEN] ([MANV], [HO], [TEN], [SDT], [NGAYSINH], [GIOITINH]) VALUES (N'NV02      ', N'Lê Nguyên', N'Trân', N'0965111987', CAST(N'1998-06-07T00:00:00.000' AS DateTime), N'nữ')
-INSERT [dbo].[NHANVIEN] ([MANV], [HO], [TEN], [SDT], [NGAYSINH], [GIOITINH]) VALUES (N'NV03      ', N'Lê Quốc', N'Anh', N'0988654890', CAST(N'1996-04-13T00:00:00.000' AS DateTime), N'nam')
-INSERT [dbo].[NHANVIEN] ([MANV], [HO], [TEN], [SDT], [NGAYSINH], [GIOITINH]) VALUES (N'NV04      ', N'Châu Mỹ', N'Phương', N'0867177890', CAST(N'1999-04-13T00:00:00.000' AS DateTime), N'nữ')
-INSERT [dbo].[NHANVIEN] ([MANV], [HO], [TEN], [SDT], [NGAYSINH], [GIOITINH]) VALUES (N'NV05      ', N'Trần Văn ', N'Long', N'0876891200', CAST(N'1999-06-06T00:00:00.000' AS DateTime), N'nam')
-INSERT [dbo].[NHANVIEN] ([MANV], [HO], [TEN], [SDT], [NGAYSINH], [GIOITINH]) VALUES (N'NV06      ', N'Nguyễn', N'Hải', N'0789123098', CAST(N'1997-09-17T00:00:00.000' AS DateTime), N'nam')
-INSERT [dbo].[NHANVIEN] ([MANV], [HO], [TEN], [SDT], [NGAYSINH], [GIOITINH]) VALUES (N'NV07      ', N'Vũ', N'Hải', N'0867182279', CAST(N'1990-03-08T00:00:00.000' AS DateTime), N'nam')
-GO
-INSERT [dbo].[HOADON] ([MAHD], [MAKH], [MANV], [NGAYMUA], [TONGCONG]) VALUES (N'HD01    ', N'KH01', N'NV04      ', CAST(N'2022-06-12' AS Date), 314000.0000)
-INSERT [dbo].[HOADON] ([MAHD], [MAKH], [MANV], [NGAYMUA], [TONGCONG]) VALUES (N'HD02    ', N'KH02', N'NV03      ', CAST(N'2022-03-24' AS Date), 705000.0000)
-INSERT [dbo].[HOADON] ([MAHD], [MAKH], [MANV], [NGAYMUA], [TONGCONG]) VALUES (N'HD03    ', N'KH06', N'NV07      ', CAST(N'2022-05-23' AS Date), 173000.0000)
-INSERT [dbo].[HOADON] ([MAHD], [MAKH], [MANV], [NGAYMUA], [TONGCONG]) VALUES (N'HD04    ', N'KH01', N'NV03      ', CAST(N'2022-03-02' AS Date), 183000.0000)
-INSERT [dbo].[HOADON] ([MAHD], [MAKH], [MANV], [NGAYMUA], [TONGCONG]) VALUES (N'HD05    ', N'KH03', N'NV01      ', CAST(N'2022-04-03' AS Date), 1323000.0000)
-INSERT [dbo].[HOADON] ([MAHD], [MAKH], [MANV], [NGAYMUA], [TONGCONG]) VALUES (N'HD06    ', N'KH04', N'NV02      ', CAST(N'2022-04-03' AS Date), 181000.0000)
-INSERT [dbo].[HOADON] ([MAHD], [MAKH], [MANV], [NGAYMUA], [TONGCONG]) VALUES (N'HD07    ', N'KH07', N'NV05      ', CAST(N'2022-05-04' AS Date), 55000.0000)
-INSERT [dbo].[HOADON] ([MAHD], [MAKH], [MANV], [NGAYMUA], [TONGCONG]) VALUES (N'HD08    ', N'KH04', N'NV06      ', CAST(N'2022-05-02' AS Date), 1235000.0000)
-GO
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A001  ', N'HD01    ', 2, 226000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A002  ', N'HD01    ', 1, 88000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A002  ', N'HD05    ', 1, 88000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A003  ', N'HD02    ', 1, 79000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A003  ', N'HD06    ', 1, 79000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A004  ', N'HD04    ', 4, 110000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A004  ', N'HD07    ', 2, 55000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A005  ', N'HD02    ', 1, 173000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A005  ', N'HD03    ', 1, 173000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A006  ', N'HD05    ', 2, 1235000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A006  ', N'HD08    ', 2, 1235000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A007  ', N'HD06    ', 1, 102000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A008  ', N'HD04    ', 1, 73000.0000)
-INSERT [dbo].[CHITIETHOADON] ([MASACH], [MAHD], [SOLUONG], [THANHTIEN]) VALUES (N'A010  ', N'HD02    ', 3, 453000.0000)
-GO
-Phần 3: Viết câu lệnh và truy vấn
---1. TÌM THÔNG TIN KHÁCH HÀNG MUA LOẠI SÁCH 'TÌNH CẢM'
-SELECT * 
-FROM [dbo].[KHACHHANG] 
-WHERE KH.MAKH IN (
-	SELECT MAKH
-	FROM HOADON
-	WHERE MAHD IN (
-		SELECT MAHD
-		FROM CHITIETHOADON
-		WHERE MASACH IN (
-			SELECT MASACH
-			FROM SACH
-			WHERE MALOAISACH IN(
-				SELECT MALOAISACH
-				FROM LOAISACH
-				WHERE TENLOAISACH = N'TÌNH CẢM'
-				)
-			)
-		)
-	)
-
---2. TÌM THÔNG TIN NHÂN VIÊN THANH TOÁN SÁCH 'TÂM LÍ'
-SELECT *
-FROM [dbo].[NHANVIEN]
-WHERE MANV IN(
-	SELECT MANV 
-	FROM [dbo].[HOADON]
-	WHERE MAHD IN (
-		SELECT MAHD
-		FROM CHITIETHOADON
-		WHERE MASACH IN (
-			SELECT MASACH
-			FROM SACH
-			WHERE MALOAISACH IN(
-				SELECT MALOAISACH
-				FROM LOAISACH
-				WHERE TENLOAISACH = N'TÂM LÍ'
-				)
-			)
-		)
-	)
-
---3. TÌM NHỮNG CUỐN SÁCH ĐƯỢC MUA VÀO THÁNG 5
-SELECT *
-FROM [dbo].[SACH]
-WHERE MASACH IN (
-	SELECT MASACH 
-	FROM CHITIETHOADON
-	WHERE MAHD IN (
-		SELECT MAHD
-		FROM HOADON
-		WHERE MONTH(NGAYMUA) = 5
-		)
-	)
---4. TÌM SỐ LƯỢNG NHỮNG CUỐN SÁCH ĐƯỢC MUA VÀO THÁNG 5
-SELECT TENSACH, CTHD.[SOLUONG]
-FROM [dbo].[SACH],[dbo].[CHITIETHOADON] AS CTHD
-WHERE [dbo].[SACH].MASACH = CTHD.MASACH AND CTHD.MAHD IN (
-	SELECT MAHD
-	FROM HOADON
-	WHERE MONTH(NGAYMUA) = 5
-	)
-
---5. TÌM THÔNG TIN TÁC GIẢ VIẾT NHỮNG LOẠI SÁCH 'VIỄN TƯỞNG'
-SELECT *
-FROM TACGIA
-WHERE MATACGIA IN (
-	SELECT MATACGIA
-	FROM SACH_TACGIA
-	WHERE MASACH IN (
-		SELECT MASACH
-		FROM SACH
-		WHERE MALOAISACH IN (
-			SELECT MALOAISACH
-			FROM LOAISACH 
-			WHERE TENLOAISACH = N'VIỄN TƯỞNG'
-			)
-		)
-	)
---6. TÌM KIẾM KHÁCH HÀNG ĐÃ HỦY MUA SÁCH
-SELECT *
-FROM KHACHHANG
-WHERE MAKH IN (
-	SELECT MAKH
-	FROM [dbo].[HOADON]
-	WHERE TINHTRANG = N'ĐÃ HỦY'
-	)
---7. TÌM KHÁCH HÀNG NỮ MUA LOẠI SÁCH 'VĂN HỌC'
-SELECT *
-FROM KHACHHANG
-WHERE GIOITINH = N'NỮ' AND MAKH IN (
-	SELECT MAKH
-	FROM HOADON
-	WHERE MAHD IN (
-		SELECT MAHD 
-		FROM CHITIETHOADON
-		WHERE MASACH IN (
-			SELECT MASACH 
-			FROM SACH
-			WHERE MALOAISACH IN (
-				SELECT MALOAISACH
-				FROM LOAISACH
-				WHERE TENLOAISACH = N'VĂN HỌC'
-				)
-			)
-		)
-	)
---8. TÌM KHÁCH HÀNG NAM MUA LOẠI SÁCH 'Truyện Tranh' MUA TẠI THÁNG 5
-SELECT *
-FROM KHACHHANG
-WHERE GIOITINH = N'NAM' AND MAKH IN (
-	SELECT MAKH
-	FROM HOADON
-	WHERE MONTH(NGAYMUA) = 5 AND MAHD IN (
-		SELECT MAHD 
-		FROM CHITIETHOADON
-		WHERE MASACH IN (
-			SELECT MASACH 
-			FROM SACH
-			WHERE MALOAISACH IN (
-				SELECT MALOAISACH
-				FROM LOAISACH
-				WHERE TENLOAISACH = N'VĂN HỌC' 
-				)
-			)
-		)
-	)
-
-
-
+# ERD diagram
+## ERD diagram 
+![ERD diagram](images/ERD.png)
+## Erd mapping
+![ERD mapping](images/ERD_mapping.png)
+## Database schema
+![Database schema](images/Database_schema.png)
 
