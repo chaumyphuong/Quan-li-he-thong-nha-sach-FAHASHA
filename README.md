@@ -124,9 +124,9 @@ This database system will serve as the backbone for both physical store operatio
 
 # ERD diagram
 ## ERD diagram 
-![ERD diagram](images/ERD.png)
+![ERD diagram](images/erd.png)
 ## Erd mapping
-![ERD mapping](images/ERD_mapping.png)
+![ERD mapping](images/erd_mapping.png)
 ## Database schema
 ![Database schema](images/Database_schema.png)
 
@@ -356,7 +356,6 @@ INSERT INTO InvoiceDetails (BookID, InvoiceID, Quantity, LineTotal) VALUES
 ('A008', 'HD04', 1,  73000),
 ('A010', 'HD02', 3, 453000);
 GO
-
 ```
 
 **Part 3: Sample Queries**
