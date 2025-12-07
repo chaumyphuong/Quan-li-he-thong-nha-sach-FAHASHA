@@ -1,5 +1,6 @@
 # FAHASA Bookstore System Management
 **Author:** Chau My Phuong
+
 **Date:** 28/11/2022
 
 **Project Description**
@@ -449,3 +450,4 @@ ORDER BY TotalSold DESC;
 GO
 
 ```
+
