@@ -1,9 +1,10 @@
 # FAHASA Bookstore System Management
 **Author:** Chau My Phuong
+**Date:** 28/11/2022
 
 **Project Description**
 Building a FAHASHA bookstore management system with the following main functions:
-- Book management (add/edit/delete/search)
+- Book management
 - Customer & employee management
 - Order & invoice management
 - Revenue statistics by month/year/book genre
@@ -446,4 +447,5 @@ JOIN InvoiceDetails id ON b.BookID = id.BookID
 GROUP BY b.Title
 ORDER BY TotalSold DESC;
 GO
+
 ```
